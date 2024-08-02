@@ -1,0 +1,6 @@
+@VeniceApi_HostAddress = http://localhost:5190
+
+GET {{VeniceApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
