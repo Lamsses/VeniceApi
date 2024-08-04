@@ -37,6 +37,7 @@ namespace VeniceApi.Controllers
         public async Task<ActionResult<Expense>> Post(Expense expense)
         {
             var newExpense = await _repositoryManager.Expense.Add(expense);
+            _repositoryManager.Save();
             return CreatedAtAction("Get", new { id = newExpense.Id }, newExpense);
         }
         [HttpPut("{id}")]
@@ -49,7 +50,7 @@ namespace VeniceApi.Controllers
             }
 
             await _repositoryManager.Expense.Update(expense);
-
+            _repositoryManager.Save();
             return Ok(expense);
         }
     }

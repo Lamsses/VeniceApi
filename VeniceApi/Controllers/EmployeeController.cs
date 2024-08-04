@@ -30,6 +30,7 @@ namespace VeniceApi.Controllers
         public async Task<ActionResult<EmployeeDto>> Post(EmployeeDto employeeDto)
         {
             var employee = await _repositoryManager.Employee.Add(_mapper.Map<Employee>(employeeDto));
+            _repositoryManager.Save();
             return CreatedAtAction("Get", new { id = employee.Id }, _mapper.Map<EmployeeDto>(employee));
         }
         [HttpPut("{id}")]
@@ -43,6 +44,7 @@ namespace VeniceApi.Controllers
 
             _mapper.Map(employeeDto, employee);
             await _repositoryManager.Employee.Update(employee);
+            _repositoryManager.Save();
 
             return Ok(employeeDto);
         }
@@ -56,6 +58,7 @@ namespace VeniceApi.Controllers
             }
 
             await _repositoryManager.Employee.Delete(id);
+            _repositoryManager.Save();
 
             return Ok(employee);
         }

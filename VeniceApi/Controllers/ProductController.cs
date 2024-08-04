@@ -41,7 +41,8 @@ namespace VeniceApi.Controllers
             public async Task<ActionResult<ProductDtoAdd>> Post(ProductDtoAdd productDto)
             {
                 var product = await _repositoryManager.Product.Add(_mapper.Map<Product>(productDto));
-                return CreatedAtAction("Get", new { id = product.Id }, _mapper.Map<ProductDtoAdd>(product));
+                _repositoryManager.Save();
+            return CreatedAtAction("Get", new { id = product.Id }, _mapper.Map<ProductDtoAdd>(product));
             }
             [HttpPut("{id}")]
             public async Task<ActionResult<ProductDtoUpdate>> Put(int id, [FromBody] ProductDtoUpdate productDto)
@@ -54,8 +55,9 @@ namespace VeniceApi.Controllers
 
                 _mapper.Map(productDto, product);
                 await _repositoryManager.Product.Update(product);
+                _repositoryManager.Save();
 
-                return Ok(productDto);
+            return Ok(productDto);
             }
             [HttpDelete("{id}")]
             public async Task<ActionResult> Delete(int id)
@@ -66,6 +68,7 @@ namespace VeniceApi.Controllers
                     return NotFound();
                 }
                 await _repositoryManager.Product.Delete(id);
+                _repositoryManager.Save();
                 return Ok();
             }
     }

@@ -43,6 +43,7 @@ namespace VeniceApi.Controllers
         public async Task<ActionResult<CustomerDto>> Post(CustomerDto customerDto)
         {
             var customer = await _repositoryManager.Customer.Add(_mapper.Map<Customer>(customerDto));
+            _repositoryManager.Save();
             return CreatedAtAction("Get", new { id = customer.Id }, _mapper.Map<CustomerDto>(customer));
         }
 
@@ -57,6 +58,7 @@ namespace VeniceApi.Controllers
 
             _mapper.Map(customerDto, customer);
             await _repositoryManager.Customer.Update(customer);
+            _repositoryManager.Save();
 
             return Ok(customerDto);
         }
