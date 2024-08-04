@@ -11,26 +11,26 @@ namespace VeniceApi.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IRepositoryManager _repositoryManager;
         private readonly IMapper _mapper;
 
-        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper)
+        public CategoryController(IMapper mapper, IRepositoryManager repositoryManager)
         {
-            _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _repositoryManager = repositoryManager;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> Get()
         {
-            var product = await _categoryRepository.GetAll();
+            var product = await _repositoryManager.Category.GetAll();
             return Ok(_mapper.Map<IEnumerable<CategoryDto>>(product));
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> Get(int id)
         {
-            var product = await _categoryRepository.GetById(id);
+            var product = await _repositoryManager.Category.GetById(id);
             if (product == null)
             {
                 return NotFound();
@@ -41,7 +41,8 @@ namespace VeniceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CategoryDtoModfiy>> Post(CategoryDtoModfiy categoryDto)
         {
-            var category = await _categoryRepository.Add(_mapper.Map<Category>(categoryDto));
+            var category = await _repositoryManager.Category.Add(_mapper.Map<Category>(categoryDto));
+            _repositoryManager.Save();
             return CreatedAtAction("Get", new { id = category.Id }, _mapper.Map<CategoryDtoModfiy>(category));
         }
 
@@ -49,26 +50,28 @@ namespace VeniceApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<CategoryDtoModfiy>> Put(int id, [FromBody] CategoryDtoModfiy categoryDto)
         {
-            var category = await _categoryRepository.GetById(id);
+            var category = await _repositoryManager.Category.GetById(id);
             if (category == null)
             {
                 return NotFound();
             }
 
             _mapper.Map(categoryDto, category);
-            await _categoryRepository.Update(category);
+            await _repositoryManager.Category.Update(category);
+            _repositoryManager.Save();
 
             return Ok(categoryDto);
         }
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var category = await _categoryRepository.GetById(id);
+            var category = await _repositoryManager.Category.GetById(id);
             if (category == null)
             {
                 return NotFound();
             }
-            await _categoryRepository.Delete(id);
+            await _repositoryManager.Category.Delete(id);
+            _repositoryManager.Save();
             return Ok();
         }
 

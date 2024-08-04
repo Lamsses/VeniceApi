@@ -11,22 +11,22 @@ namespace VeniceApi.Controllers
     [ApiController]
     public class ExpenseController : ControllerBase
     {
-        private readonly IExpenseRepository _expenseRepository;
+        private readonly IRepositoryManager _repositoryManager;
 
-        public ExpenseController(IExpenseRepository expenseRepository)
+        public ExpenseController(IRepositoryManager repositoryManager)
         {
-            _expenseRepository = expenseRepository;
+            _repositoryManager = repositoryManager;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Expense>>> Get()
         {
-            var expenses = await _expenseRepository.GetAll();
+            var expenses = await _repositoryManager.Expense.GetAll();
             return Ok(expenses);
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Expense>> Get(int id)
         {
-            var expense = await _expenseRepository.GetById(id);
+            var expense = await _repositoryManager.Expense.GetById(id);
             if (expense == null)
             {
                 return NotFound();
@@ -36,20 +36,21 @@ namespace VeniceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Expense>> Post(Expense expense)
         {
-            var newExpense = await _expenseRepository.Add(expense);
+            var newExpense = await _repositoryManager.Expense.Add(expense);
+            _repositoryManager.Save();
             return CreatedAtAction("Get", new { id = newExpense.Id }, newExpense);
         }
         [HttpPut("{id}")]
         public async Task<ActionResult<Expense>> Put(int id, [FromBody] Expense expense)
         {
-            var expenseToUpdate = await _expenseRepository.GetById(id);
+            var expenseToUpdate = await _repositoryManager.Expense.GetById(id);
             if (expenseToUpdate == null)
             {
                 return NotFound();
             }
 
-            await _expenseRepository.Update(expense);
-
+            await _repositoryManager.Expense.Update(expense);
+            _repositoryManager.Save();
             return Ok(expense);
         }
     }
