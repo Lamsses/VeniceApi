@@ -18,7 +18,7 @@ public class BaseReopsitory<T> : IRepository<T>  where T : class
     public  async Task<T> Add(T entity)
     {
         _dbSet.Add(entity);
-        await _context.SaveChangesAsync();
+        
         return entity;
     }
 
@@ -28,7 +28,7 @@ public class BaseReopsitory<T> : IRepository<T>  where T : class
         if (entity != null)
         {
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            
         }
     }
 
@@ -46,6 +46,6 @@ public class BaseReopsitory<T> : IRepository<T>  where T : class
     public async Task Update(T entity)
     {
         _context.Entry(entity).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
+        
     }
 }

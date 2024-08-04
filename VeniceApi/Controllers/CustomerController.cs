@@ -12,26 +12,26 @@ namespace VeniceApi.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly ICustomerRepository _customerRepository;
+        private readonly IRepositoryManager _repositoryManager;
         private readonly IMapper _mapper;
 
-        public CustomerController(ICustomerRepository customerRepository, IMapper mapper)
+        public CustomerController(IRepositoryManager repositoryManager, IMapper mapper)
         {
-            _customerRepository = customerRepository;
+            _repositoryManager = repositoryManager;
             _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CustomerDto>>> Get()
         {
-            var customers = await _customerRepository.GetAll();
+            var customers = await _repositoryManager.Customer.GetAll();
             return Ok(_mapper.Map<IEnumerable<CustomerDto>>(customers));
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerDto>> Get(int id)
         {
-            var product = await _customerRepository.GetById(id);
+            var product = await _repositoryManager.Customer.GetById(id);
             if (product == null)
             {
                 return NotFound();
@@ -42,21 +42,21 @@ namespace VeniceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CustomerDto>> Post(CustomerDto customerDto)
         {
-            var customer = await _customerRepository.Add(_mapper.Map<Customer>(customerDto));
+            var customer = await _repositoryManager.Customer.Add(_mapper.Map<Customer>(customerDto));
             return CreatedAtAction("Get", new { id = customer.Id }, _mapper.Map<CustomerDto>(customer));
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<CustomerDto>> Put(int id, [FromBody] CustomerDto customerDto)
         {
-            var customer = await _customerRepository.GetById(id);
+            var customer = await _repositoryManager.Customer.GetById(id);
             if (customer == null)
             {
                 return NotFound();
             }
 
             _mapper.Map(customerDto, customer);
-            await _customerRepository.Update(customer);
+            await _repositoryManager.Customer.Update(customer);
 
             return Ok(customerDto);
         }

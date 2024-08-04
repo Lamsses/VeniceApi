@@ -19,7 +19,7 @@ namespace VeniceApi.Controllers
             this.orderItemRepository = orderItemRepository;
             this.mapper = mapper;
         }
-        [HttpGet]
+        
 
 
 
