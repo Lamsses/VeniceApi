@@ -21,6 +21,13 @@ public class BaseReopsitory<T> : IRepository<T>  where T : class
         
         return entity;
     }
+    public  async Task<IEnumerable<T>> AddRange(IEnumerable<T> entity)
+    {
+        _dbSet.AddRange(entity);
+        
+        return entity;
+    }
+
 
     public async Task Delete(int id)
     {

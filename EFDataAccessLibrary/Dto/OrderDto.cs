@@ -17,5 +17,7 @@ namespace EFDataAccessLibrary.Dto
         public int CustomerId { get; set; }
         public int EmployeeId { get; set; }
 
+        public ICollection<ProductDto> Products { get; set; } = new List<ProductDto>();
+
     }
 }

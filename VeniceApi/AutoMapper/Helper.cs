@@ -29,6 +29,9 @@ namespace VeniceApi.Dto
             CreateMap<Employee, EmployeeDto>();
             CreateMap<EmployeeDto, Employee>();
 
+            CreateMap<Order, OrderDto>();
+            CreateMap<OrderDto, Order>();
+
         }
 
     }
