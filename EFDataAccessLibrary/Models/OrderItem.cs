@@ -16,6 +16,13 @@ namespace EFDataAccessLibrary.Models
 
         public int Quantity { get; set; }
 
+        public int PrecentageDiscount { get; set; }
+        public int FixedDiscount { get; set; }
+        public decimal Price => FixedDiscount > 0 ? (Product.Price - FixedDiscount) : PrecentageDiscount > 0 ? Product.Price * (PrecentageDiscount/ 100 ): Product.Price; 
+        public decimal TotalPrice => Price * Quantity;
+
+
+
 
     }
 

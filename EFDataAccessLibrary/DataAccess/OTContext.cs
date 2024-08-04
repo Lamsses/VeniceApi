@@ -1,10 +1,6 @@
 ﻿using EFDataAccessLibrary.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace EFDataAccessLibrary.DataAccess;
 
@@ -35,16 +31,14 @@ public class OTContext : DbContext
             .HasMany(c => c.Orders)
             .WithOne(o => o.Customer)
             .HasForeignKey(o => o.CustomerId);
-        modelBuilder.Entity<Order>()
-            .HasMany(o => o.OrderItems)
-            .WithOne(oi => oi.Order)
-            .HasForeignKey(oi => oi.OrderId);
-        modelBuilder.Entity<OrderItem>().
-            HasOne(oi => oi.Product)
-            .WithMany(p => p.OrderItems)
-            .HasForeignKey(oi => oi.ProductId);
 
-         
+        modelBuilder.Entity<Order>()
+               .HasMany(o => o.Product)
+               .WithMany(p => p.Order)
+               .UsingEntity<OrderItem>();
+
+        
+
     }
 
 
