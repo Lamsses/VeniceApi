@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using EFDataAccessLibrary.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VeniceApi.Interfaces;
+using VeniceApi.Repository;
 
 namespace VeniceApi.Controllers
 {
@@ -19,9 +21,13 @@ namespace VeniceApi.Controllers
             this.orderItemRepository = orderItemRepository;
             this.mapper = mapper;
         }
-        
 
-
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> Get()
+        {
+            var product = await orderRepository.GetAll();
+            return Ok(mapper.Map<IEnumerable<ProductDto>>(product));
+        }
 
     }
 }
