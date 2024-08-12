@@ -31,17 +31,36 @@ namespace VeniceApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrderDto>> Post(OrderDto order)
+        public async Task<ActionResult<OrderDto>> Post([FromBody] OrderDto orderDto)
         {
-            var orderMap = mapper.Map<Order>(order);
-            var orderToCreate = await _repositoryManager.Order.Add(orderMap);
-            var orderItems = new List<OrderItem>([
-            new OrderItem {OrderId = order.Id, FixedDiscount = 1, ProductId = 11,Quantity = 1, PrecentageDiscount = 1}
+          
+            var order = mapper.Map<Order>(orderDto);
 
-            ]);
-            await _repositoryManager.OrderItem.AddRange(orderItems);
+            // Save the new order to the database
+            var savedOrder =await _repositoryManager.Order.Add(order);
             _repositoryManager.Save();
-            return Ok(orderToCreate);
+            var orderItemList = new List<OrderItem>();
+
+            foreach (var item in orderDto.orderItems)
+            {
+                
+                var orderItem = mapper.Map<OrderItem>(item);
+                orderItemList.Add(new OrderItem { OrderId = savedOrder.Id ,ProductId = item.ProductId});
+            }
+                await _repositoryManager.OrderItem.AddRange(orderItemList);
+
+            //var orderItemDto = new OrderItemDto()
+            //{
+            //    OrderId = confirm.Id,
+            //    ProductId = productIdkey.Id
+            //};
+            //var orderItem = mapper.Map<OrderItem>(orderItemDto);
+
+            // Save the new order item to the database
+            //await _repositoryManager.OrderItem.Add(orderItem);
+            _repositoryManager.Save();
+
+            return orderDto;
         }
     }
 }

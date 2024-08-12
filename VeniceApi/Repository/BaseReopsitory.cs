@@ -23,6 +23,8 @@ public class BaseReopsitory<T> : IRepository<T>  where T : class
     }
     public  async Task<IEnumerable<T>> AddRange(IEnumerable<T> entity)
     {
+
+        _context.Entry(entity).State = EntityState.Detached;
         _dbSet.AddRange(entity);
         
         return entity;
@@ -52,7 +54,6 @@ public class BaseReopsitory<T> : IRepository<T>  where T : class
 
     public async Task Update(T entity)
     {
-        _context.Entry(entity).State = EntityState.Modified;
-        
+       _dbSet.Update(entity);
     }
 }

@@ -15,7 +15,7 @@ public class Order
     public int EmployeeId { get; set; }
     public Employee Employee { get; set; }
 
-    public ICollection<Product> Product { get; set; } = new List<Product>();
+    public ICollection<OrderItem> orderItems { get; set; }
 }
 
 public enum OrderStatus

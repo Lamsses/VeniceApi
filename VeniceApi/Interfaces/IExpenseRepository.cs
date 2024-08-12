@@ -4,5 +4,6 @@ namespace VeniceApi.Interfaces
 {
     public interface IExpenseRepository : IRepository<Expense> 
     {
+
     }
 }

@@ -13,6 +13,8 @@ namespace EFDataAccessLibrary.Models
         public int Id { get; set; }
 
         [Required]
+
+        public int RandomId { get; set; }
         public string Name { get; set; }
 
         [Required]
@@ -35,6 +37,8 @@ namespace EFDataAccessLibrary.Models
         public string Address { get; set; }
 
         public string Photo { get; set; } // Optional
+
+        public bool IsVisible { get; set; } = true;
 
         public ICollection<Order> Orders { get; set; }
 

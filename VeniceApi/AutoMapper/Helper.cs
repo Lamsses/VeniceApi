@@ -32,6 +32,11 @@ namespace VeniceApi.Dto
             CreateMap<Order, OrderDto>();
             CreateMap<OrderDto, Order>();
 
+            CreateMap<OrderItem, OrderItemDto>();
+            CreateMap<OrderItemDto, OrderItem>();
+
+            CreateMap<Expense, ExpenseDto>();
+            CreateMap<ExpenseDto, Expense>();
         }
 
     }

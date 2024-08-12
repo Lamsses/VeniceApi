@@ -17,6 +17,7 @@ public class OTContext : DbContext
 
     public DbSet<Category> Categories { get; set; }
 
+   
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Product>()
@@ -33,9 +34,16 @@ public class OTContext : DbContext
             .HasForeignKey(o => o.CustomerId);
 
         modelBuilder.Entity<Order>()
-               .HasMany(o => o.Product)
-               .WithMany(p => p.Order)
-               .UsingEntity<OrderItem>();
+            .HasMany(o => o.orderItems)
+            .WithOne(oi => oi.Order)
+            .HasForeignKey(oi => oi.OrderId);
+        modelBuilder.Entity<Product>() 
+            .HasMany(p => p.orderItems)
+            .WithOne(oi => oi.Product)
+            .HasForeignKey(oi => oi.ProductId);
+        modelBuilder.Entity<OrderItem>()
+            .HasKey(oi => new { oi.OrderId, oi.ProductId });
+
 
         
 

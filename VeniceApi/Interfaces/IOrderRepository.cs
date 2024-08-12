@@ -1,4 +1,5 @@
-﻿using EFDataAccessLibrary.Models;
+﻿using EFDataAccessLibrary.Dto;
+using EFDataAccessLibrary.Models;
 
 namespace VeniceApi.Interfaces
 {

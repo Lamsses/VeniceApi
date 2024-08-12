@@ -11,6 +11,11 @@ namespace EFDataAccessLibrary.Dto
     public class ProductDtoAdd
     {
         public string Name { get; set; }
+
+
+        public bool IsVisible { get; set; } = true;
+
+        public int RandomId { get; set; }
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public ProductType Type { get; set; }

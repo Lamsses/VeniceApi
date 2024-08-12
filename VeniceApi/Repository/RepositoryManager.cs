@@ -1,4 +1,5 @@
-﻿using EFDataAccessLibrary.DataAccess;
+﻿using AutoMapper;
+using EFDataAccessLibrary.DataAccess;
 using VeniceApi.Interfaces;
 
 namespace VeniceApi.Repository
@@ -6,6 +7,7 @@ namespace VeniceApi.Repository
     public sealed class RepositoryManager : IRepositoryManager
     {
         private readonly OTContext _context;
+        private readonly IMapper _mapper;
         private readonly Lazy<IProductRepository> _productRepository;
         private readonly Lazy<ICategoryRepository> _categoryRepository;
         private readonly Lazy<ICustomerRepository> _customersRepository;
@@ -15,15 +17,16 @@ namespace VeniceApi.Repository
         private readonly Lazy<IOrderItemRepository> _orderItemRepository;
 
 
-        public RepositoryManager(OTContext context)
+        public RepositoryManager(OTContext context , IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
             _productRepository = new Lazy<IProductRepository>(() => new ProductRepository(context));
             _categoryRepository = new Lazy<ICategoryRepository>(() => new CategoryRepository(context));
             _customersRepository = new Lazy<ICustomerRepository>(() => new CustomerRepository(context));
             _employeeRepository = new Lazy<IEmployeeRepository>(() => new EmployeeRepository(context));
             _expenseRepository = new Lazy<IExpenseRepository>(() => new ExpenseRepository(context));
-            _orderRepository = new Lazy<IOrderRepository>(() => new OrderRepository(context));
+            _orderRepository = new Lazy<IOrderRepository>(() => new OrderRepository(context)); // Add null as the third argument
             _orderItemRepository = new Lazy<IOrderItemRepository>(() => new OrderItemRepository(context));
 
         }
