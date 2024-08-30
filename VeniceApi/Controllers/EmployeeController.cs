@@ -64,7 +64,7 @@ public class EmployeeController : ControllerBase
         var employee = await _repositoryManager.Employee.Add(_mapper.Map<Employee>(employeeDto));
 
 
-        _repositoryManager.Save();
+        await _repositoryManager.Save();
         return CreatedAtAction("Get", new { id = employee.Id }, _mapper.Map<EmployeeDto>(employee));
     }
 
@@ -92,7 +92,7 @@ public class EmployeeController : ControllerBase
         await _repositoryManager.Employee.Update(employee);
 
         // Save the changes
-        _repositoryManager.Save();
+        await _repositoryManager.Save();
 
         // Return the updated employee DTO
         return Ok(employeeDto);
@@ -108,7 +108,7 @@ public class EmployeeController : ControllerBase
         }
 
         await _repositoryManager.Employee.Delete(id);
-        _repositoryManager.Save();
+        await _repositoryManager.Save();
 
         return Ok(employee);
     }

@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using EFDataAccessLibrary.Dto;
 using EFDataAccessLibrary.Models;
-using Microsoft.AspNetCore.Components.Forms.Mapping;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VeniceApi.Interfaces;
-using VeniceApi.Repository;
 
 namespace VeniceApi.Controllers
 {
@@ -34,25 +31,21 @@ namespace VeniceApi.Controllers
         public async Task<ActionResult<OrderDto>> Post([FromBody] OrderDto orderDto)
         {
             var order = mapper.Map<Order>(orderDto);
+            order.Id = Guid.NewGuid();
 
-            // Save the new order to the database
-            var savedOrder = await _repositoryManager.Order.Add(order);
-
-            // Create a list of OrderItem entities from the incoming DTO
-            var orderItemList = orderDto.orderItems.Select(item => new OrderItem
+            await _repositoryManager.Order.Add(order);
+            // Assign foreign key for each OrderItem
+            var orderItemsList = orderDto.OrderItems.Select(i => new OrderItem()
             {
-                OrderId = savedOrder.Id, // Set the foreign key for each OrderItem
-                ProductId = item.ProductId,
-                // Add other properties as needed
+                ProductId = i.ProductId,
+                OrderId = order.Id,
+                Quantity = i.Quantity
             }).ToList();
-
-            // Add the list of OrderItem entities to the database
-            var response = await _repositoryManager.OrderItem.AddRange(orderItemList);
+            await _repositoryManager.OrderItem.AddRange(orderItemsList);
+            // Add order and its related OrderItems at once (EF will handle the tracking)
             await _repositoryManager.Save(); // Save changes asynchronously
 
             return Ok(orderDto); // Return the DTO if needed
         }
-
-
     }
 }

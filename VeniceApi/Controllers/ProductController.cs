@@ -93,7 +93,7 @@ namespace VeniceApi.Controllers
                 return NotFound();
             }
             await _repositoryManager.Product.Delete(id);
-            _repositoryManager.Save();
+            await _repositoryManager.Save();
             return Ok();
         }
     }

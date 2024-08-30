@@ -34,18 +34,13 @@ public class OTContext : DbContext
             .HasForeignKey(o => o.CustomerId);
 
         modelBuilder.Entity<Order>()
-            .HasMany(o => o.orderItems)
-            .WithOne(oi => oi.Order)
-            .HasForeignKey(oi => oi.OrderId);
-        modelBuilder.Entity<Product>() 
-            .HasMany(p => p.orderItems)
-            .WithOne(oi => oi.Product)
-            .HasForeignKey(oi => oi.ProductId);
-        modelBuilder.Entity<OrderItem>()
-            .HasKey(oi => new { oi.OrderId, oi.ProductId });
-
-
+            .HasMany(o => o.Products)
+            .WithMany(p => p.Orders)
+            .UsingEntity<OrderItem>();
         
+
+
+
 
     }
 

@@ -15,7 +15,7 @@ namespace EFDataAccessLibrary.Dto
         public decimal Price { get; set; }
         public int RandomId { get; set; }
 
-        public int Quantity { get; set; }
+        public int InStock { get; set; }
         public ProductType Type { get; set; }
         public string PicturePath { get; set; }
         public int CategoryId { get; set; }

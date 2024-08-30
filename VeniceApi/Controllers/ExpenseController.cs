@@ -62,7 +62,7 @@ namespace VeniceApi.Controllers
             expense.UpdatedDate = DateTime.Now;
             expense.CreatedDate = DateTime.Now;
             expense.RandomId = GenerateRandomId();
-            _repositoryManager.Save();
+            await _repositoryManager.Save();
             return CreatedAtAction("Get", new { id = newExpense.Id }, newExpense);
         }
         [HttpPut("{id}")]
@@ -76,7 +76,7 @@ namespace VeniceApi.Controllers
 
             var newExpense =_mapper.Map(expense, expenseToUpdate);
             await _repositoryManager.Expense.Update(newExpense);
-            _repositoryManager.Save();
+            await _repositoryManager.Save();
             return Ok(expense);
         }
         

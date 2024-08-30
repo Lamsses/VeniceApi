@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace VeniceApi.Migrations
 {
     [DbContext(typeof(OTContext))]
-    [Migration("20240810091121_ea")]
-    partial class ea
+    [Migration("20240830181948_AddDiscountAndQuantity")]
+    partial class AddDiscountAndQuantity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,6 +98,9 @@ namespace VeniceApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
                     b.Property<string>("JobTitle")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -147,10 +150,14 @@ namespace VeniceApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RandomId")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
 
-                    b.Property<int>("Type")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RandomId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedDate")
@@ -163,11 +170,9 @@ namespace VeniceApi.Migrations
 
             modelBuilder.Entity("EFDataAccessLibrary.Models.Order", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -175,8 +180,14 @@ namespace VeniceApi.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("FixedDiscount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("PercentageDiscount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Recipt")
                         .IsRequired()
@@ -199,10 +210,13 @@ namespace VeniceApi.Migrations
 
             modelBuilder.Entity("EFDataAccessLibrary.Models.OrderItem", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("OrderId", "ProductId");
@@ -223,6 +237,12 @@ namespace VeniceApi.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<int>("InStock")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -234,7 +254,7 @@ namespace VeniceApi.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("RandomId")
                         .HasColumnType("int");
 
                     b.Property<int>("Type")
@@ -268,21 +288,17 @@ namespace VeniceApi.Migrations
 
             modelBuilder.Entity("EFDataAccessLibrary.Models.OrderItem", b =>
                 {
-                    b.HasOne("EFDataAccessLibrary.Models.Order", "Order")
-                        .WithMany("orderItems")
+                    b.HasOne("EFDataAccessLibrary.Models.Order", null)
+                        .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Product", "Product")
-                        .WithMany("orderItems")
+                    b.HasOne("Product", null)
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Product", b =>
@@ -309,16 +325,6 @@ namespace VeniceApi.Migrations
             modelBuilder.Entity("EFDataAccessLibrary.Models.Employee", b =>
                 {
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("EFDataAccessLibrary.Models.Order", b =>
-                {
-                    b.Navigation("orderItems");
-                });
-
-            modelBuilder.Entity("Product", b =>
-                {
-                    b.Navigation("orderItems");
                 });
 #pragma warning restore 612, 618
         }
