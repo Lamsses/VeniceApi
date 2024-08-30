@@ -60,9 +60,11 @@ namespace VeniceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductDtoAdd>> Post(ProductDtoAdd productDto)
         {
-            var product = await _repositoryManager.Product.Add(_mapper.Map<Product>(productDto));
+            var productToDto = _mapper.Map<Product>(productDto);
+            var product = await _repositoryManager.Product.Add(productToDto);
+            
             product.RandomId = GenerateRandomId();
-            _repositoryManager.Save();
+             await _repositoryManager.Save();
             return CreatedAtAction("Get", new { id = product.Id }, _mapper.Map<ProductDtoAdd>(product));
         }
 

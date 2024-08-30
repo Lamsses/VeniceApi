@@ -9,7 +9,7 @@ namespace EFDataAccessLibrary.Dto
 {
     public class OrderItemDto
     {
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public int ProductId { get; set; }
 
 

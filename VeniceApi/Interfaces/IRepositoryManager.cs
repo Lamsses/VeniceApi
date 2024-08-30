@@ -9,6 +9,6 @@
         IExpenseRepository Expense { get; }
         IOrderRepository Order { get; }
         IOrderItemRepository OrderItem { get; }
-        void Save();
+        Task Save();
     }
 }

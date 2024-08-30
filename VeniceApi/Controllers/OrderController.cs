@@ -33,34 +33,26 @@ namespace VeniceApi.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderDto>> Post([FromBody] OrderDto orderDto)
         {
-          
             var order = mapper.Map<Order>(orderDto);
 
             // Save the new order to the database
-            var savedOrder =await _repositoryManager.Order.Add(order);
-            _repositoryManager.Save();
-            var orderItemList = new List<OrderItem>();
+            var savedOrder = await _repositoryManager.Order.Add(order);
 
-            foreach (var item in orderDto.orderItems)
+            // Create a list of OrderItem entities from the incoming DTO
+            var orderItemList = orderDto.orderItems.Select(item => new OrderItem
             {
-                
-                var orderItem = mapper.Map<OrderItem>(item);
-                orderItemList.Add(new OrderItem { OrderId = savedOrder.Id ,ProductId = item.ProductId});
-            }
-                await _repositoryManager.OrderItem.AddRange(orderItemList);
+                OrderId = savedOrder.Id, // Set the foreign key for each OrderItem
+                ProductId = item.ProductId,
+                // Add other properties as needed
+            }).ToList();
 
-            //var orderItemDto = new OrderItemDto()
-            //{
-            //    OrderId = confirm.Id,
-            //    ProductId = productIdkey.Id
-            //};
-            //var orderItem = mapper.Map<OrderItem>(orderItemDto);
+            // Add the list of OrderItem entities to the database
+            var response = await _repositoryManager.OrderItem.AddRange(orderItemList);
+            await _repositoryManager.Save(); // Save changes asynchronously
 
-            // Save the new order item to the database
-            //await _repositoryManager.OrderItem.Add(orderItem);
-            _repositoryManager.Save();
-
-            return orderDto;
+            return Ok(orderDto); // Return the DTO if needed
         }
+
+
     }
 }

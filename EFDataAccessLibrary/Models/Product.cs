@@ -7,6 +7,9 @@ public class Product
     public string Name { get; set; }
     public decimal Price { get; set; }
     public int Quantity { get; set; }
+
+    public DateTime CreatedDate { get; set; } = DateTime.Now;
+    public DateTime UpdatedDate { get; set; } = DateTime.Now;
     public ProductType Type { get; set; }
     public string PicturePath { get; set; }
     

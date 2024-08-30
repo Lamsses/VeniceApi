@@ -4,6 +4,7 @@ using EFDataAccessLibrary.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace VeniceApi.Migrations
 {
     [DbContext(typeof(OTContext))]
-    partial class OTContextModelSnapshot : ModelSnapshot
+    [Migration("20240828134102_updateorder")]
+    partial class updateorder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +45,7 @@ namespace VeniceApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("EFDataAccessLibrary.Models.Customer", b =>
@@ -76,7 +79,7 @@ namespace VeniceApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("EFDataAccessLibrary.Models.Employee", b =>
@@ -126,7 +129,7 @@ namespace VeniceApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("EFDataAccessLibrary.Models.Expense", b =>
@@ -162,7 +165,7 @@ namespace VeniceApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Expenses", (string)null);
+                    b.ToTable("Expenses");
                 });
 
             modelBuilder.Entity("EFDataAccessLibrary.Models.Order", b =>
@@ -196,7 +199,7 @@ namespace VeniceApi.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("EFDataAccessLibrary.Models.OrderItem", b =>
@@ -211,7 +214,7 @@ namespace VeniceApi.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems", (string)null);
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("Product", b =>
@@ -252,7 +255,7 @@ namespace VeniceApi.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("EFDataAccessLibrary.Models.Order", b =>

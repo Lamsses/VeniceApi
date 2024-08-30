@@ -40,6 +40,6 @@ namespace VeniceApi.Repository
         public IOrderItemRepository OrderItem => _orderItemRepository.Value;
 
 
-        public void Save() => _context.SaveChanges();
+        public async Task Save() => await _context.SaveChangesAsync();
     }
 }
