@@ -1,4 +1,5 @@
-﻿using EFDataAccessLibrary.DataAccess;
+﻿using System.Linq.Expressions;
+using EFDataAccessLibrary.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using VeniceApi.Interfaces;
 
@@ -45,6 +46,16 @@ public class BaseReopsitory<T> : IRepository<T>  where T : class
     {
         return await _dbSet.ToListAsync();
 
+    }
+
+    public  IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges)
+    {
+        return !trackChanges ?
+            _context.Set<T>()
+                .Where(expression)
+                .AsNoTracking() :
+            _context.Set<T>()
+                .Where(expression);
     }
 
     public virtual async Task<T> GetById(int id)

@@ -42,7 +42,7 @@ namespace VeniceApi.Controllers
         public async Task<ActionResult<CategoryDtoModfiy>> Post(CategoryDtoModfiy categoryDto)
         {
             var category = await _repositoryManager.Category.Add(_mapper.Map<Category>(categoryDto));
-            _repositoryManager.Save();
+            await _repositoryManager.Save();
             return CreatedAtAction("Get", new { id = category.Id }, _mapper.Map<CategoryDtoModfiy>(category));
         }
 
@@ -58,7 +58,7 @@ namespace VeniceApi.Controllers
 
             _mapper.Map(categoryDto, category);
             await _repositoryManager.Category.Update(category);
-            _repositoryManager.Save();
+            await _repositoryManager.Save();
 
             return Ok(categoryDto);
         }
@@ -71,7 +71,7 @@ namespace VeniceApi.Controllers
                 return NotFound();
             }
             await _repositoryManager.Category.Delete(id);
-            _repositoryManager.Save();
+            await _repositoryManager.Save();
             return Ok();
         }
 

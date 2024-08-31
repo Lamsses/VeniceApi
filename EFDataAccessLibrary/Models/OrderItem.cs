@@ -8,8 +8,8 @@ namespace EFDataAccessLibrary.Models
 {
     public class OrderItem
     {
-        public Guid? OrderId { get; set; }
-        public int? ProductId { get; set; }
+        public Guid OrderId { get; set; }
+        public int ProductId { get; set; }
         public int Quantity { get; set; }
 
 
