@@ -56,6 +56,13 @@ namespace VeniceApi.Controllers
             }
             return Ok(_mapper.Map<ProductDtoUpdate>(product));
         }
+        [HttpGet("search/{name}")]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> Get(string name)
+        {
+            var products = await _repositoryManager.Product.GetAll();
+            var product = products.Where(p => p.Name.ToLower().Contains(name.ToLower()));
+            return Ok(_mapper.Map<IEnumerable<ProductDto>>(product));
+        }
 
         [HttpPost]
         public async Task<ActionResult<ProductDtoAdd>> Post(ProductDtoAdd productDto)

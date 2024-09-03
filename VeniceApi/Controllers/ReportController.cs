@@ -48,16 +48,19 @@ namespace VeniceApi.Controllers
                     var category = await _repositoryManager.Category.FindByCondition(c => c.Id == product.CategoryId, false).SingleOrDefaultAsync()
                         ;
                     var customer =  await _repositoryManager.Customer.FindByCondition(c => c.Id == order.CustomerId, false).SingleOrDefaultAsync();
+                  
+
                     orderReportList.Add(new OrderReport
                     {
                         Recipte = order.Recipt,
                         ProductName = product!.Name,
-                        CategoryName = category!.Name,
-                        CustomerName = customer!.Name,
+                        CategoryName = category.Name,
+                        CustomerName = customer?.Name ?? "لايوجد",
                         OrderStatus = order.Status,
                         ProductPrice = product.Price
-                        
                     });
+                  
+               
                 }
 
             }

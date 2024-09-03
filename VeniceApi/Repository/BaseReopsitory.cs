@@ -44,7 +44,14 @@ public class BaseReopsitory<T> : IRepository<T>  where T : class
 
     public async Task<IEnumerable<T>> GetAll()
     {
+
         return await _dbSet.ToListAsync();
+
+
+    }
+    public IQueryable<T> GetAllQuery()
+    {
+        return _dbSet.AsQueryable();
 
     }
 

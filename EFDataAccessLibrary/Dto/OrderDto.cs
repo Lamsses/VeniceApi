@@ -16,8 +16,8 @@ namespace EFDataAccessLibrary.Dto
         public int PercentageDiscount { get; set; } = 0;
         public decimal TotalAmount { get; set; }
         public OrderStatus Status { get; set; }
-        public int CustomerId { get; set; }
-        public int EmployeeId { get; set; }
+        public int? CustomerId { get; set; }
+        public int? EmployeeId { get; set; }
 
         public ICollection<OrderItemDto> OrderItems { get; set; }
 

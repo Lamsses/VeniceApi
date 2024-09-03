@@ -37,9 +37,17 @@ public class OTContext : DbContext
             .HasMany(o => o.Products)
             .WithMany(p => p.Orders)
             .UsingEntity<OrderItem>();
-        
 
+        modelBuilder.Entity<Category>().HasData(
+            new Category { Id = 1, Name = "مسبح" },
+            new Category { Id = 2, Name = "جم نسائي" },
+            new Category { Id = 3, Name = "علاج فيزيائي" },
+            new Category { Id = 4, Name = " دورات سباحة" },
+            new Category { Id = 5, Name = "مبيعات" },
+            new Category { Id = 6, Name = "غير ذلك" }
+            );
 
+       
 
 
     }

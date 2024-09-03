@@ -11,11 +11,11 @@ public class Order
     public decimal TotalAmount { get; set; }
     public OrderStatus Status { get; set; }
 
-    public int CustomerId { get; set; }
-    public Customer Customer { get; set; } 
+    public int? CustomerId { get; set; }
+    public Customer? Customer { get; set; } 
 
-    public int EmployeeId { get; set; }
-    public Employee Employee { get; set; }
+    public int? EmployeeId { get; set; }
+    public Employee? Employee { get; set; }
 
     public ICollection<Product> Products { get; set; }
 }
