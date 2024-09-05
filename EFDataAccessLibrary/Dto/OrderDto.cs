@@ -17,9 +17,9 @@ namespace EFDataAccessLibrary.Dto
         public decimal TotalAmount { get; set; }
         public OrderStatus Status { get; set; }
         public int? CustomerId { get; set; }
+        public string CustomerName { get; set; }
         public int? EmployeeId { get; set; }
-
-        public ICollection<OrderItemDto> OrderItems { get; set; }
+        public ICollection<OrderItem> OrderItems { get; set; }
 
 
 

@@ -26,11 +26,26 @@ namespace VeniceApi.Controllers
             return random.Next(100000, 1000000); // Generates a number between 100000 and 999999
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> Get()
+        public async Task<ActionResult<IEnumerable<OrderDto>>> Get()
         {
-            var orders = await _repositoryManager.Order.GetAll();
+            var orders = await _repositoryManager.Order.GetAllQuery().Include(o => o.Customer).ToListAsync();
+            var orderItems = await _repositoryManager.OrderItem.GetAll();
+            var ordersDto = orders.Select(o => new OrderDto()
+            {
+                Id = o.Id,
+                Recipt = o.Recipt,
+                OrderDate = o.OrderDate,
+                Status = o.Status,
+                FixedDiscount = o.FixedDiscount,
+                PercentageDiscount = o.PercentageDiscount,
+                TotalAmount = o.TotalAmount,
+                CustomerId = o.CustomerId,
+                CustomerName = o.Customer.Name,
+                EmployeeId = o.EmployeeId,
+                OrderItems = orderItems.Where(oi => oi.OrderId == o.Id).ToList()
+            }).ToList();
            
-            return Ok(orders);
+            return Ok(ordersDto);
         }
 
         [HttpGet("orderItems/{orderId}")]
