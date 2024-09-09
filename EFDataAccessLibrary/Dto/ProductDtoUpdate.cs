@@ -14,7 +14,7 @@ namespace EFDataAccessLibrary.Dto
 
         public bool IsVisible { get; set; } = true;
 
-        public int Quantity { get; set; }
+        public int InStock { get; set; }
         public ProductType Type { get; set; }
         public string PicturePath { get; set; }
 

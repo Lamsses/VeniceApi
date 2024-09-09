@@ -28,8 +28,12 @@ namespace VeniceApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderDto>>> Get()
         {
-            var orders = await _repositoryManager.Order.GetAllQuery().Include(o => o.Customer).ToListAsync();
+            var orders = await _repositoryManager.Order.GetAllQuery()
+                .Include(o => o.Customer)
+                .ToListAsync();
+
             var orderItems = await _repositoryManager.OrderItem.GetAll();
+
             var ordersDto = orders.Select(o => new OrderDto()
             {
                 Id = o.Id,
@@ -39,13 +43,44 @@ namespace VeniceApi.Controllers
                 FixedDiscount = o.FixedDiscount,
                 PercentageDiscount = o.PercentageDiscount,
                 TotalAmount = o.TotalAmount,
-                CustomerId = o.CustomerId,
-                CustomerName = o.Customer.Name,
-                EmployeeId = o.EmployeeId,
+                CustomerId = o.CustomerId ?? null,
+                CustomerName = o.Customer != null ? o.Customer.Name : "empty", // Handle null Customer
+                EmployeeId = o.EmployeeId ?? null,
                 OrderItems = orderItems.Where(oi => oi.OrderId == o.Id).ToList()
             }).ToList();
-           
+
             return Ok(ordersDto);
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<OrderDto>> Get(Guid id)
+        {
+            var order = await _repositoryManager.Order.FindByCondition(o => o.Id == id, false)
+                .Include(o => o.Customer)
+                .FirstOrDefaultAsync();
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var orderItems = await _repositoryManager.OrderItem.FindByCondition(oi => oi.OrderId == id, false).ToListAsync();
+
+            var orderDto = new OrderDto()
+            {
+                Id = order.Id,
+                Recipt = order.Recipt,
+                OrderDate = order.OrderDate,
+                Status = order.Status,
+                FixedDiscount = order.FixedDiscount,
+                PercentageDiscount = order.PercentageDiscount,
+                TotalAmount = order.TotalAmount,
+                CustomerId = order.CustomerId ?? null,
+                CustomerName = order.Customer != null ? order.Customer.Name : "empty", // Handle null Customer
+                EmployeeId = order.EmployeeId ?? null,
+                OrderItems = orderItems
+            };
+
+            return Ok(orderDto);
         }
 
         [HttpGet("orderItems/{orderId}")]
@@ -90,5 +125,23 @@ namespace VeniceApi.Controllers
 
             return Ok(orderDto); // Return the DTO if needed
         }
+        [HttpPut("updateStatus/{id}")]
+        public async Task<ActionResult<OrderDto>> Put(Guid id, [FromBody] OrderDto orderDto)
+        {
+            var order = await _repositoryManager.Order.FindByCondition(o => o.Id == id, false)
+                .FirstOrDefaultAsync();
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            mapper.Map(orderDto, order);
+            await _repositoryManager.Order.Update(order);
+            await _repositoryManager.Save();
+
+            return Ok(orderDto);
+        }
+
     }
 }

@@ -46,7 +46,7 @@ namespace VeniceApi.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDtoUpdate>> Get(int id)
+        public async Task<ActionResult<ProductDto>> Get(int id)
         {
 
             var product = await _repositoryManager.Product.GetById(id);
@@ -54,7 +54,7 @@ namespace VeniceApi.Controllers
             {
                 return NotFound();
             }
-            return Ok(_mapper.Map<ProductDtoUpdate>(product));
+            return Ok(_mapper.Map<ProductDto>(product));
         }
         [HttpGet("search/{name}")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> Get(string name)
