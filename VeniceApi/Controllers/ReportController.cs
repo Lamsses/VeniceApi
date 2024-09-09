@@ -23,13 +23,31 @@ namespace VeniceApi.Controllers
         public async Task<IActionResult> OrderReports(
             [FromBody] OrderReportRequest request,
             DateTime fromDate,
-            DateTime toDate
+            DateTime? toDate
             )
 
         {
-            var orders = await _repositoryManager.Order.
+            var orders = new List<Order>();
+            if (toDate is null)
+            {
+                orders = await _repositoryManager.Order.
+                    FindByCondition(o => (o.OrderDate >= fromDate)
+                        , false).ToListAsync();
+            }
+            else if (fromDate == toDate)
+            {
+                fromDate = fromDate.Date;
+                toDate = toDate.Value.Date.AddDays(1).AddTicks(-1);
+                orders = await _repositoryManager.Order.
+                    FindByCondition(o => (o.OrderDate >= fromDate && o.OrderDate <= toDate)
+                        , false).ToListAsync();
+            }
+            else
+            {
+                orders = await _repositoryManager.Order.
                 FindByCondition(o => (o.OrderDate >= fromDate && o.OrderDate <= toDate)
                     , false ).ToListAsync();
+            }
             if (request.OrderStatuses != null && request.OrderStatuses.Any())
             {
                 orders = orders.Where(o => request.OrderStatuses.Contains((int)o.Status)).ToList();
@@ -45,6 +63,8 @@ namespace VeniceApi.Controllers
                 {
                     var product = await _repositoryManager.Product
                         .FindByCondition(p => p.Id == item.ProductId && (request.CategoryIds == null || request.CategoryIds.Contains(p.CategoryId)), false).SingleOrDefaultAsync();
+                    if (product is null)
+                        continue;
                     var category = await _repositoryManager.Category.FindByCondition(c => c.Id == product.CategoryId, false).SingleOrDefaultAsync()
                         ;
                     var customer =  await _repositoryManager.Customer.FindByCondition(c => c.Id == order.CustomerId, false).SingleOrDefaultAsync();
