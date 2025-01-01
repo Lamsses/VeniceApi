@@ -86,7 +86,7 @@ namespace VeniceApi.Controllers
 
             _mapper.Map(productDto, product);
             await _repositoryManager.Product.Update(product);
-            _repositoryManager.Save();
+            await _repositoryManager.Save();
 
             return Ok(productDto);
         }
@@ -100,6 +100,19 @@ namespace VeniceApi.Controllers
                 return NotFound();
             }
             await _repositoryManager.Product.Delete(id);
+            await _repositoryManager.Save();
+            return Ok();
+        }
+        [HttpDelete("softdelete/{id}")]
+        public async Task<ActionResult> SoftDelete(int id)
+        {
+            var product = await _repositoryManager.Product.GetById(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            product.IsVisible = false;
+            await _repositoryManager.Product.Update(product);
             await _repositoryManager.Save();
             return Ok();
         }

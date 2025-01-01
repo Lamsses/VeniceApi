@@ -51,6 +51,81 @@ namespace VeniceApi.Controllers
 
             return Ok(ordersDto);
         }
+        public class PagedOrdersDto
+        {
+            public int PageSize { get; set; }
+            public int TotalPages { get; set; }
+            public List<OrderDto> Orders { get; set; }
+        }
+
+        [HttpGet("page")]
+        public async Task<ActionResult<PagedOrdersDto>> GetPage([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var ordersQuery = _repositoryManager.Order.GetAllQuery().OrderByDescending(e => e.OrderDate)
+                .Include(o => o.Customer);
+
+            var totalOrders = await ordersQuery.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalOrders / pageSize);
+
+            var orders = await ordersQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var orderItems = await _repositoryManager.OrderItem.GetAll();
+
+            var ordersDto = orders.Select(o => new OrderDto()
+            {
+                Id = o.Id,
+                Recipt = o.Recipt,
+                OrderDate = o.OrderDate,
+                Status = o.Status,
+                FixedDiscount = o.FixedDiscount,
+                PercentageDiscount = o.PercentageDiscount,
+                TotalAmount = o.TotalAmount,
+                CustomerId = o.CustomerId ?? null,
+                CustomerName = o.Customer != null ? o.Customer.Name : "empty",
+                EmployeeId = o.EmployeeId ?? null,
+                OrderItems = orderItems.Where(oi => oi.OrderId == o.Id).ToList()
+            }).ToList();
+
+            var pagedOrdersDto = new PagedOrdersDto()
+            {
+                PageSize = pageSize,
+                TotalPages = totalPages,
+                Orders = ordersDto
+            };
+
+            return Ok(pagedOrdersDto);
+        }
+
+        [HttpGet("search/{recipt}")]
+        public async Task<ActionResult<IEnumerable<OrderDto>>> Get(string recipt)
+        {
+            var orders = await _repositoryManager.Order.FindByCondition(o => o.Recipt.Contains(recipt), false)
+                .Include(o => o.Customer)
+                .ToListAsync();
+
+            var orderItems = await _repositoryManager.OrderItem.GetAll();
+
+            var ordersDto = orders.Select(o => new OrderDto()
+            {
+                Id = o.Id,
+                Recipt = o.Recipt,
+                OrderDate = o.OrderDate,
+                Status = o.Status,
+                FixedDiscount = o.FixedDiscount,
+                PercentageDiscount = o.PercentageDiscount,
+                TotalAmount = o.TotalAmount,
+                CustomerId = o.CustomerId ?? null,
+                CustomerName = o.Customer != null ? o.Customer.Name : "empty", // Handle null Customer
+                EmployeeId = o.EmployeeId ?? null,
+                OrderItems = orderItems.Where(oi => oi.OrderId == o.Id).ToList()
+            }).ToList();
+
+            return Ok(ordersDto);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderDto>> Get(Guid id)
         {
@@ -101,8 +176,9 @@ namespace VeniceApi.Controllers
         {
             var order = mapper.Map<Order>(orderDto);
             order.Id = Guid.NewGuid();
+            order.OrderDate = DateTime.Now;
 
-            order.Recipt = GenerateRandomId().ToString();
+           // order.Recipt = GenerateRandomId().ToString();
             await _repositoryManager.Order.Add(order);
             // Assign foreign key for each OrderItem
             var orderItemsList = orderDto.OrderItems.Select(i => new OrderItem()
@@ -128,14 +204,14 @@ namespace VeniceApi.Controllers
         [HttpPut("updateStatus/{id}")]
         public async Task<ActionResult<OrderDto>> Put(Guid id, [FromBody] OrderDto orderDto)
         {
-            var order = await _repositoryManager.Order.FindByCondition(o => o.Id == id, false)
+            var order = await _repositoryManager.Order.FindByCondition(o => o.Id == id , false)
                 .FirstOrDefaultAsync();
 
             if (order == null)
             {
                 return NotFound();
             }
-
+            orderDto.Id = id;
             mapper.Map(orderDto, order);
             await _repositoryManager.Order.Update(order);
             await _repositoryManager.Save();

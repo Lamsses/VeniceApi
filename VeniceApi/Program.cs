@@ -41,7 +41,8 @@ var app = builder.Build();
         options.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
 
     });
-}
+app.Urls.Add("http://*:5000");
+
 
 app.UseCors("CorsPolicy");
 

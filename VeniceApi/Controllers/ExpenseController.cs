@@ -25,25 +25,42 @@ namespace VeniceApi.Controllers
             Random random = new Random();
             return random.Next(100000, 1000000); // Generates a number between 100000 and 999999
         }
-        [HttpGet]
 
-        public async Task<ActionResult<IEnumerable<Expense>>> GetExpenses(int page = 1, int pageSize = 10)
+        [HttpGet]
+        public async Task<ActionResult> GetExpenses(int page = 1, int pageSize = 10)
         {
+            if (page < 1 || pageSize < 1)
+            {
+                return BadRequest("Page and pageSize must be greater than 0.");
+            }
+
+            // Get all expenses
             var expenses = await _repositoryManager.Expense.GetAll();
-            var visibleExpenses = expenses.Where(e => e.IsVisible); // Filter expenses with visible set to true
+
+            // Filter visible expenses
+            var visibleExpenses = expenses.Where(e => e.IsVisible).OrderByDescending(e => e.CreatedDate);
+
+            // Calculate total number of expenses and pages
             var totalExpenses = visibleExpenses.Count();
             var totalPages = (int)Math.Ceiling((double)totalExpenses / pageSize);
 
-            var paginatedExpenses = visibleExpenses.Skip((page - 1) * pageSize).Take(pageSize);
+            // Apply pagination
+            var paginatedExpenses = visibleExpenses
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();  // Materialize the query to avoid deferred execution
 
+            // Return the paginated result, total pages, and total items count
             var result = new
             {
                 TotalPages = totalPages,
+                TotalItems = totalExpenses,  // Optionally, return total number of items
                 Expenses = paginatedExpenses
             };
 
             return Ok(result);
         }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Expense>> Get(int id)
         {
